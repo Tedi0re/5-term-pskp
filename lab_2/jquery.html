@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Hello, world!</h1>
+    <p id="content"></p>
+    <script type="text/javascript">
+        $.ajax({
+            url: 'http://localhost:5000/api/name',
+            type: "GET",
+            success: (response) => {
+                $('#content').html(response);
+            },
+            error: (response) => {
+                $('#content').html('Ошибка. Данные не отправлены.');
+            }
+        });
+    </script>
+</body>
+</html>
