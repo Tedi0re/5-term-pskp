@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="content"></div>
+    <script>
+        const REQUEST_PORT = 5000;
+
+        const content = document.getElementById('content');
+        const beginning = Date.now();
+        for (x = 0; x <=20; x++){
+            const REQUEST_URL = `http://localhost:${REQUEST_PORT}/fact?k=${x}&cycle=1`;
+            fetch(`${REQUEST_URL}`).then(response =>{
+                if(response.ok){
+                    return response.text();
+                }
+                else {
+                    throw new Error("Error");
+                }
+            }).then(data => {
+                let obj = JSON.parse(data);
+                content.insertAdjacentHTML('beforeend',`<p>${obj.k}.Результат:${Date.now() - beginning}-${obj.k}/${obj.fact}</p>`);
+            }).catch(err=>{
+                console.log(err.message);
+            });
+        }
+    </script>
+</body>
+</html>
