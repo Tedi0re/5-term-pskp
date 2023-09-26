@@ -5,8 +5,8 @@ const puppeteer = require('puppeteer');
         headless: true,
         executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
         args: ['--incognito'],
-        defaultNavigationTimeout: 60000
-       // executablePath : 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+        defaultNavigationTimeout: 60000,
+        //executablePath : 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
     });
     const page = await browser.newPage();
 

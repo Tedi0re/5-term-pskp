@@ -14,7 +14,7 @@ server.listen(PORT, 'localhost', (err) => {
     if (err) {
         console.error(err);
     } else {
-        console.log('Server is running on port', PORT);
+        console.log('http://localhost:5000');
     }
 });
 
