@@ -15,7 +15,8 @@
                 method:'GET',
                 mode: "no-cors",
                 headers: {'Content-Type': 'application/json', 'Accept' : 'application/json'}
-            }).then(res => {return res.json();})
+            }).then(res => {
+                return res.json();})
                 .then(pdata=>{
                     console.log('pdata', pdata);
                     let get_result = document.getElementById('get_result');
@@ -52,16 +53,25 @@
                 headers: {'Content-Type' : 'application/json', 'Accept': 'application/json'},
                 body: JSON.stringify({id:ID.value, name:Name.value, bday:BDay.value})
             }).then(res=>{
-                return res.json();
+                if(res.ok) return res.json();
+                throw new Error("Invalid ID!");
+
             }).then((pdata)=>{
                 console.log('POST.pdata', pdata);
+                const errorContainer = document.getElementById('Error_container');
+                errorContainer.textContent = "";
+
+            }).catch(error=>{
+                const errorContainer = document.getElementById('Error_container');
+                errorContainer.textContent = 'Error: ' + error.message;
+
             });
         }
     </script>
 <div style="padding:20px">
     <div class="row">
         <label class="col-2">Идентификатор</label>
-        <input type="number" class="col-1" id="ID_UPD" min="0"/>
+        <input type="number" class="col-1" id="ID_UPD" min="0" onchange="getPutObject(this.value)"/>
     </div>
     <div class="row">
         <label class="col-2">ФИО</label>
@@ -85,10 +95,55 @@
             headers: {'Content-Type' : 'application/json', 'Accept': 'application/json'},
             body: JSON.stringify({id:ID_UPD.value, name:Name_UPD.value, bday:BDay_UPD.value})
         }).then(res=>{
-            return res.json();
+            if (res.ok) {
+                return res.json();
+            }
+            throw new Error("PUT: ERROR");
+
         }).then((pdata)=>{
             console.log('PUT.pdata', pdata);
+            const errorContainer = document.getElementById('Error_container');
+            errorContainer.textContent = "";
+        }).catch(error=>{
+            const errorContainer = document.getElementById('Error_container');
+            errorContainer.textContent = 'Error: ' + error.message;
         });
+    }
+
+    function getPutObject(id){
+        fetch('http://localhost:5000/api/db', {
+            method:'GET',
+            //mode: "no-cors",
+            headers: {'Content-Type': 'application/json', 'Accept' : 'application/json'}
+        }).then(res => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                throw new Error('Error PUT data');
+            }})
+            .then(pdata=>{
+
+                let name = document.getElementById('Name_UPD');
+                let bday = document.getElementById('BDay_UPD');
+                for (const pdatum of pdata) {
+
+                    if(pdatum.id ===  id)
+                    {
+                        name.value = pdatum.name;
+                        bday.value = pdatum.bday;
+
+                        const errorContainer = document.getElementById('Error_container');
+                        errorContainer.textContent = "";
+                        return;
+                    }
+                }
+                name.value = "";
+                bday.value = "";
+                throw new Error(`No such object with id = ${id}`);
+            }).catch(error=>{
+            const errorContainer = document.getElementById('Error_container');
+            errorContainer.textContent = 'Error: ' + error.message;
+        })
     }
 </script>
 <div style="padding:20px">
@@ -110,11 +165,18 @@
             headers: {'Content-Type' : 'application/json', 'Accept': 'application/json'},
             body: JSON.stringify({id:ID_DEL.value,})
         }).then(res=>{
-            return res.json();
+            if(res.ok) return res.json();
+            throw new Error("No such object with current ID!");
         }).then((pdata)=>{
             console.log('DELETE.pdata', pdata);
+            const errorContainer = document.getElementById('Error_container');
+            errorContainer.textContent = "";
+        }).catch(error=>{
+            const errorContainer = document.getElementById('Error_container');
+            errorContainer.textContent = 'Error: No such object with current ID!' ;
         });
     }
 </script>
+<div id="Error_container" style="color: red; font-size: large"></div>
 </body>
 </html>

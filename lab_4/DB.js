@@ -33,10 +33,24 @@ const _update  = (object)=> {
 
 class DB extends EventEmitter{
     get(){return _select();};
-    post(object) {_insert(object)};
+    post(object) {
+        for (const dbDatum of db_data) {
+            if(dbDatum.id === object.id)
+                throw new Error("POST: Duplicate id!");
+            if(object.id.trim() === "" || object.id.trim() === undefined){
+                throw new Error("POST: void id!")
+            }
+        }
+        _insert(object)};
 
     put(object) {
-        _update(object)
+        for (const dbDatum of db_data) {
+            if(dbDatum.id === object.id) {
+                _update(object)
+                return;
+            }
+        }
+        throw new Error(`PUT: No such object with id = ${object.id}`);
     }
 
     delete(object){
