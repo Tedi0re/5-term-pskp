@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>06-07</h2>
+<form action="/formparameter" method="post">
+    <!-- Текстовое поле -->
+    <label for="text">Текст:</label>
+    <input type="text" id="text" name="text"><br>
+
+    <!-- Числовое поле -->
+    <label for="number">Число:</label>
+    <input type="number" id="number" name="number"><br>
+
+    <!-- Поле даты -->
+    <label for="date">Дата:</label>
+    <input type="date" id="date" name="date"><br>
+
+    <!-- Флажок (checkbox) -->
+    <label for="checkbox">Флажок:</label>
+    <input type="checkbox" id="checkbox" name="checkbox"><br>
+
+    <!-- Переключатель (radio button) -->
+    <label>Выберите пол:</label><br>
+    <input type="radio" id="male" name="gender" value="male">
+    <label for="male">Мужской</label><br>
+    <input type="radio" id="female" name="gender" value="female">
+    <label for="female">Женский</label><br>
+
+    <!-- Многострочное текстовое поле (textarea) -->
+    <label for="textarea">Комментарий:</label><br>
+    <textarea id="textarea" name="textarea" rows="4" cols="50"></textarea><br>
+
+    <!-- Два кнопки submit с одинаковым именем и разными значениями -->
+    <input type="submit" name="submit" value="Отправить">
+    <input type="submit" name="submit" value="Сбросить">
+</form>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "lab_5_1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemailer": "^6.9.7",
+    "nodemailer-smtp-transport": "^2.4.2",
+    "saa_06": "^1.0.0"
+  }
+}

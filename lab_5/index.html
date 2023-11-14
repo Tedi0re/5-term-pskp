@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Отправка почты</title>
+</head>
+<body>
+<h1>Отправка почты</h1>
+<form action="/sendmail" method="POST">
+    <label>Email отправителя:</label>
+    <input type="email" name="senderEmail" required><br>
+    <label>Email получателя:</label>
+    <input type="email" name="recipientEmail" required><br>
+    <label>Сообщение:</label>
+    <textarea name="message" required></textarea><br>
+    <input type="submit" value="Отправить">
+</form>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+        * {
+            background-color: #2f2f2f;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            color: whitesmoke;
+        }
+
+        .arr {
+            text-align: center;
+        }
+
+  
+    </style>
+
+</head>
+
+
+
+<body>
+    <div id="container">
+        <form action="http://localhost:5000/" method="POST">
+            <table id="container_table">
+
+
+                <tr>
+                    <td>Отправитель</td>
+                    <td><input id="sender" type="email" name="sender" placeholder="Ваш e-mail"></td>
+                </tr>
+
+                <tr>
+                    <td>Пароль</td>
+                    <td><input id="password" type="password" name="password" placeholder="Ваш пароль"></td>
+                </tr>
+
+                <tr>
+                    <td>Получатель</td>
+                    <td><input id="receiver" type="email" name="receiver" placeholder="E-mail получателя"></td>
+                </tr>
+
+                <tr>
+                    <td>Сообщение</td>
+                    <td><input id="message" type="text" name="message" placeholder="Ваше сообщение"></td>
+                </tr>
+            </table>
+            </table>
+            
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+
+</body>
+</html>

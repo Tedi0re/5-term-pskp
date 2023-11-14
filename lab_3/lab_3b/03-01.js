@@ -183,7 +183,7 @@ Promise.all([fu2(n), fu3(n), fu4(n)]).then(result=>{
 }).catch(err=>{
     console.log(err);
 })
----------------------------------------
+
 const fu2 = (n) =>{
     return new Promise((resolve, reject)=>{
         setTimeout(()=>{

@@ -2,9 +2,9 @@ const EventEmitter = require('events');
 
 
 let db_data=[
-{id:'1', name:"Симонов А. А.", bday:'25.02.2004'},
-{id:'2', name:'Козак О. Д.', bday:'21.12.2004'},
-{id:'3', name:'Климович А. С.', bday:'17.7.2003'},
+{id:'1', name:"Симонов А. А.", bday:'2004-02-25'},
+{id:'2', name:'Козак О. Д.', bday:'2004-12-21'},
+{id:'3', name:'Климович А. С.', bday:'2003-07-21'},
 ];
 
 const _select = ()=>{
@@ -46,6 +46,14 @@ class DB extends EventEmitter{
     put(object) {
         for (const dbDatum of db_data) {
             if(dbDatum.id === object.id) {
+                var now = new Date()
+                var today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).valueOf()
+                var BDayValue = new Date(object.bday); // Преобразование строки в объект Date
+                var BDayTimestamp = BDayValue.valueOf(); // Преобразование даты в метку времени
+
+                if (BDayTimestamp > today) {
+                    throw new Error("Invalid Date");
+                }
                 _update(object)
                 return;
             }

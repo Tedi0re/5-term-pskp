@@ -37,7 +37,9 @@
         </div>
         <div class="row">
             <label class="col-2">Дата рождения</label>
-            <input type="text" class="col-1" id="BDay" min="0"/>
+            <input type="date" class="col-1" id="BDay">
+<!--            <input type="text" class="col-1" id="BDay" min="0"/>-->
+            <
         </div>
         <div class="row">
             <button class="col-2"  onclick="Post()">POST</button>
@@ -46,26 +48,45 @@
     <!--POST-->
     <script>
         function Post(){
-            console.log('POST');
-            fetch('http://localhost:5000/api/db', {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {'Content-Type' : 'application/json', 'Accept': 'application/json'},
-                body: JSON.stringify({id:ID.value, name:Name.value, bday:BDay.value})
-            }).then(res=>{
-                if(res.ok) return res.json();
-                throw new Error("Invalid ID!");
+            try{
+                var now = new Date()
+                var today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).valueOf()
+                var BDayValue = new Date(BDay.value); // Преобразование строки в объект Date
+                var BDayTimestamp = BDayValue.valueOf(); // Преобразование даты в метку времени
 
-            }).then((pdata)=>{
-                console.log('POST.pdata', pdata);
+                if (BDayTimestamp > today) {
+                    throw new Error("Invalid Date");
+                }
+                console.log(BDay.value);
+                console.log(today);
+                console.log('POST');
+                fetch('http://localhost:5000/api/db', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {'Content-Type' : 'application/json', 'Accept': 'application/json'},
+                    body: JSON.stringify({id:ID.value, name:Name.value, bday:BDay.value})
+                }).then(res=>{
+                    if(res.ok) return res.json();
+                    throw new Error("Error!");
+
+                }).then((pdata)=>{
+                    console.log('POST.pdata', pdata);
+                    const errorContainer = document.getElementById('Error_container');
+                    errorContainer.textContent = "";
+
+                }).catch(error=>{
+                    const errorContainer = document.getElementById('Error_container');
+                    errorContainer.textContent = 'Error: ' + error.message;
+
+                });
                 const errorContainer = document.getElementById('Error_container');
                 errorContainer.textContent = "";
-
-            }).catch(error=>{
+            }
+            catch (e){
                 const errorContainer = document.getElementById('Error_container');
-                errorContainer.textContent = 'Error: ' + error.message;
+                errorContainer.textContent = 'Error: ' + e.message;
+            }
 
-            });
         }
     </script>
 <div style="padding:20px">
@@ -79,7 +100,7 @@
     </div>
     <div class="row">
         <label class="col-2">Дата рождения</label>
-        <input type="text" class="col-1" id="BDay_UPD" min="0"/>
+        <input type="date" class="col-1" id="BDay_UPD">
     </div>
     <div class="row">
         <button class="col-2"  onclick="Put()">PUT</button>
@@ -102,6 +123,7 @@
 
         }).then((pdata)=>{
             console.log('PUT.pdata', pdata);
+
             const errorContainer = document.getElementById('Error_container');
             errorContainer.textContent = "";
         }).catch(error=>{
@@ -129,12 +151,20 @@
 
                     if(pdatum.id ===  id)
                     {
-                        name.value = pdatum.name;
-                        bday.value = pdatum.bday;
 
+                        pdatum.bday = new Date(pdatum.bday).valueOf();
+                        console.log("1");
+                        const date = new Date(pdatum.bday);
+                        console.log("2");
+                        const formattedDate = date.toISOString().split('T')[0];
+                        console.log("3");
+                        name.value = pdatum.name;
+                        bday.value = formattedDate;
+                        console.log(formattedDate);
                         const errorContainer = document.getElementById('Error_container');
                         errorContainer.textContent = "";
                         return;
+
                     }
                 }
                 name.value = "";
