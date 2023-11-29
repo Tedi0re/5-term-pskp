@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>08-01</h1>
+<button id="connectWebSocket"> startWS </button>
+<div id="messageToServer"></div>
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', ()=> {
+        const connectButton = document.getElementById("connectWebSocket");
+        const messageToServer = document.getElementById("messageToServer")
+
+        connectButton.addEventListener('click', () => {
+            let socket;
+                socket = new WebSocket('ws://localhost:4000/start');
+                // Обработка событий WebSocket
+                let funcSend;
+                socket.onopen = () => {
+                    let n = 0;
+                    console.log('CONNECT')
+                    funcSend = setInterval (()=>{
+                        n++;
+                        console.log(n);
+                        socket.send(`08-01-client: ${n}`)
+                    }, 3000)
+                }
+                setTimeout (()=>{
+                    console.log('Disconnect');
+                    clearInterval(funcSend);
+                    socket.close();
+                    return 0;
+                }, 25000)
+
+                socket.onmessage = (event) => {
+                    let message = document.createElement('p');
+                    message.textContent =   `${event.data.toString()}`;
+                    messageToServer.appendChild(message);
+                }
+        })
+    })
+</script>
+</html>
