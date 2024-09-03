@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta>
+    <title>Document</title>
+
+    <script>
+        function inputView() {
+            document.getElementById('resultDiv').textContent = '';
+            const method = document.querySelector('input[name="Method"]:checked').value;
+            const teacherInput = document.querySelector('.Teacher');
+            const teacherNameInput = document.querySelector('.TeacherName');
+            const pulpitInput = document.querySelector('.Pulpit');
+
+            // Hide all inputs by default
+            teacherInput.style.display = 'none';
+            teacherNameInput.style.display = 'none';
+            pulpitInput.style.display = 'none';
+
+            // Show specific inputs based on the selected method
+            switch (method) {
+                case "POST":
+                    teacherInput.style.display = 'block';
+                    teacherNameInput.style.display = 'block';
+                    pulpitInput.style.display = 'block';
+                    break;
+                case "PUT":
+                    teacherInput.style.display = 'block';
+                    teacherNameInput.style.display = 'block';
+                    pulpitInput.style.display = 'block';
+                    break;
+                case "DELETE":
+                    teacherInput.style.display = 'block';
+                    break;
+                default:
+                    // No inputs for GET method
+                    break;
+            }
+        }
+
+        async function SendRequest() {
+            const method = document.querySelector('input[name="Method"]:checked').value;
+            const teacher = document.querySelector('.Teacher').value;
+            const teacherName = document.querySelector('.TeacherName').value;
+            const pulpit = document.querySelector('.Pulpit').value;
+            let url = `http://localhost:3000/api/teachers`;
+            const table = document.getElementById('data');
+            const data = {
+                TEACHER: teacher,
+                TEACHER_NAME: teacherName,
+                PULPIT: pulpit
+            };
+
+
+            let resultJson;
+
+            let onlyHeadersRowLeft = table.rows.length > 1;
+            while (onlyHeadersRowLeft) {
+                table.deleteRow(1);
+                onlyHeadersRowLeft = table.rows.length > 1;
+            }
+
+            let response;
+            switch (method) {
+
+                case "POST":
+                    if ((!teacher && !teacherName && !pulpit)) {
+                        alert('Data error. Please fill in all fields.');
+                        return;
+                    }
+                    try {
+                        document.getElementById('resultDiv').textContent = '';
+                        response = await fetch(url, {
+                            method: method,
+                            body: JSON.stringify(data),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.status === 404 || response.status===400) {
+                            document.getElementById('resultDiv').textContent = await response.text();
+                        } else {
+                            const result = await response.json();
+                            console.log(result[0]);
+                            createTableContentFromJson(table, result);
+                        }
+                    } catch (e) {
+                        alert("Error: " + e.message);
+                    }
+
+                    break;
+                case "GET" :
+                    document.getElementById('resultDiv').textContent = '';
+                    response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    resultJson = await response.json();
+                    console.log(resultJson);
+                    createTableContentFromJson(table, resultJson)
+                    break;
+                case "PUT":
+                    if ((!teacher && !teacherName && !pulpit)) {
+                        alert('Data error. Please fill in all fields.');
+                        return;
+                    }
+                    try {
+                        document.getElementById('resultDiv').textContent = '';
+                        response = await fetch(url, {
+                            method: method,
+                            body: JSON.stringify(data),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.status === 404 || response.status===400) {
+                            document.getElementById('resultDiv').textContent = await response.text();
+                        } else {
+                            const result = await response.json();
+                            console.log(result[0]);
+                            createTableContentFromJson(table, result);
+                        }
+
+                    } catch (e) {
+                        alert("Error: " + e.message);
+                    }
+
+                    break;
+                case "DELETE":
+                    url = url.concat(`/${teacher}`);
+                    document.getElementById('resultDiv').textContent = '';
+                    try {
+                        response = await fetch(url, {
+                            method: method,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.status === 404 || response.status===400 ) {
+                            document.getElementById('resultDiv').textContent = await response.text();
+                        } else {
+                            const result = await response.json();
+                            console.log(result[0]);
+                            createTableContentFromJson(table, result);
+                        }
+                    } catch (e) {
+                        alert("Error: " + e.message);
+                    }
+                    break;
+
+            }
+
+        }
+
+        function createTableContentFromJson(table, resultJson) {
+            resultJson.forEach(element => {
+                const teacher = element.teacher;
+                const teacherName = element.teacher_name;
+                const pulpit = element.pulpit;
+
+                const tr = document.createElement('tr');
+                const teacherCell = document.createElement('td');
+                const teacherNameCell = document.createElement('td');
+                const pulpitCell = document.createElement('td');
+
+                teacherCell.textContent = teacher;
+                teacherNameCell.textContent = teacherName;
+                pulpitCell.textContent = pulpit;
+
+                tr.appendChild(teacherCell);
+                tr.appendChild(teacherNameCell);
+                tr.appendChild(pulpitCell);
+
+                table.appendChild(tr);
+            });
+
+        }
+    </script>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <h2 class="Header">Methods</h2>
+    <div class="Methods">
+        <label onclick="inputView()">
+            GET
+            <input type="radio" name="Method" value="GET">
+        </label>
+        <label onclick="inputView()">
+            POST
+            <input type="radio" name="Method" value="POST">
+        </label>
+        <label onclick="inputView()">
+            PUT
+            <input type="radio" name="Method" value="PUT">
+        </label>
+        <label onclick="inputView()">
+            DELETE
+            <input type="radio" name="Method" value="DELETE">
+        </label>
+    </div>
+
+    <h2 class="Header">Data</h2>
+
+    <div id="DataInputGroup" class="DataInputGroup">
+        <label>
+            <input class="Teacher" type="text" placeholder="Teacher" style="display: none">
+        </label>
+        <label>
+            <input class="TeacherName" type="text" placeholder="Teacher name" style="display: none">
+        </label>
+        <label>
+            <input class="Pulpit" type="text" placeholder="Pulpit" style="display: none">
+        </label>
+    </div>
+
+    <Button class="SendButton" onclick="SendRequest()">request</Button>
+    <div id="resultDiv"></div>
+
+    <h2 class="Header">Result</h2>
+    <table id="data" class="table">
+        <tr id="header">
+            <th>Teacher</th>
+            <th>Teacher name</th>
+            <th>Pulpit</th>
+        </tr>
+    </table>
+
+</div>
+</body>
+</html>

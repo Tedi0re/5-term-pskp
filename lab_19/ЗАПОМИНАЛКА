@@ -1,0 +1,17 @@
+openssl genrsa -des3 -out CA.key 2048 -- генерим ключ для подписи сертификата и шифруем des3 2048 длина ключа
+
+openssl req -x509 -new -key CA.key -days 700 -sha256 -out CA.crt --подписываем сертификат 
+
+----это от центра
+
+получили от центра crt добавили его в mmc
+
+openssl genrsa -out LAB.KEY 2048 -- генерация приватного ключа ресурса
+
+openssl req -new -key LAB.key -out LAB.csr -sha256 -config LAB.cfg  -- генерация запроса на серт для рес
+
+---это от 4клиента, у нас сгенерится csr  запрос на сертификацию отправили центру и cfg тоже
+
+openssl x509 -req -in LAB.csr -CA CA.crt -CAkey CA.key -CAcreateserial -out LAB.crt -days 365 -sha256 -extensions v3_req -extfile LAB.cfg  -- генерация сертификата для ресурса
+
+--центр сгенерил и отправили это клиенту

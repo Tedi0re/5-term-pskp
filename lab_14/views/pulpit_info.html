@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кафедры</title>
+  <style>
+    .pagination {
+      margin-top: 20px;
+    }
+    .pagination button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+<h1>Информация о кафедрах</h1>
+<div id="pulpits"></div>
+<div class="pagination" id="pagination"></div>
+
+<script>
+  async function getPulpitInfo(){
+    try {
+      const response = await fetch('http://localhost:3000/api/pulpitsHTML', {
+        method: 'GET',
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const resultJson = await response.json();
+      return resultJson;
+    } catch (error) {
+      console.error('Error fetching pulpit info:', error);
+    }
+  }
+
+  const pulpitContainer = document.getElementById('pulpits');
+  const paginationContainer = document.getElementById('pagination');
+
+  const itemsPerPage = 10;
+  let currentPage = 1;
+
+  async function displayPulpits(pageNumber) {
+    const pulpitData = await getPulpitInfo();
+    if (!pulpitData) {
+      return;
+    }
+    pulpitContainer.innerHTML = '';
+    const startIndex = (pageNumber - 1) * itemsPerPage;
+    const endIndex = pageNumber * itemsPerPage;
+    const paginatedPulpits = pulpitData.slice(startIndex, endIndex);
+    console.log(pulpitData);
+    paginatedPulpits.forEach(pulpit => {
+      const pulpitElement = document.createElement('div');
+      pulpitElement.innerHTML = `
+          <p><strong>Название кафедры:</strong> ${pulpit.PULPIT}</p>
+          <p><strong>Название:</strong> ${pulpit.PULPIT_NAME}</p>
+          <p><strong>Факультет:</strong> ${pulpit.FACULTY}</p>
+          <p><strong>Количество преподавателей:</strong> ${pulpit._count.TEACHER_TEACHER_PULPITToPULPIT}</p>
+
+          <hr>
+        `;
+      pulpitContainer.appendChild(pulpitElement);
+    });
+  }
+
+  async function displayPagination() {
+    const pulpitData = await getPulpitInfo();
+    paginationContainer.innerHTML = '';
+    const pageCount = Math.ceil(pulpitData.length / itemsPerPage);
+    for (let i = 1; i <= pageCount; i++) {
+      const button = document.createElement('button');
+      button.innerText = i;
+      button.addEventListener('click', () => {
+        currentPage = i;
+        displayPulpits(currentPage);
+      });
+      paginationContainer.appendChild(button);
+    }
+  }
+
+  displayPulpits(currentPage);
+  displayPagination();
+</script>
+</body>
+</html>

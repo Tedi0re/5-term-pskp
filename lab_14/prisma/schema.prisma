@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model AUDITORIUM {
+  AUDITORIUM                                                  String          @id(map: "PK__AUDITORI__537260104A49DBB6") @db.NChar(10)
+  AUDITORIUM_NAME                                             String?         @db.NVarChar(200)
+  AUDITORIUM_CAPACITY                                         Int?
+  AUDITORIUM_TYPE                                             String          @db.NChar(10)
+  AUDITORIUM_TYPE_AUDITORIUM_AUDITORIUM_TYPEToAUDITORIUM_TYPE AUDITORIUM_TYPE @relation("AUDITORIUM_AUDITORIUM_TYPEToAUDITORIUM_TYPE", fields: [AUDITORIUM_TYPE], references: [AUDITORIUM_TYPE], onDelete: Cascade, onUpdate: NoAction, map: "FK_AUDITORIUM_TYPE")
+}
+
+model AUDITORIUM_TYPE {
+  AUDITORIUM_TYPE                                        String       @id(map: "PK__AUDITORI__EC06DCD35C6276C7") @db.NChar(10)
+  AUDITORIUM_TYPENAME                                    String       @db.NVarChar(30)
+  AUDITORIUM_AUDITORIUM_AUDITORIUM_TYPEToAUDITORIUM_TYPE AUDITORIUM[] @relation("AUDITORIUM_AUDITORIUM_TYPEToAUDITORIUM_TYPE")
+}
+
+model FACULTY {
+  FACULTY                        String   @id(map: "PK_FACULTY") @db.NChar(10)
+  FACULTY_NAME                   String?  @db.NVarChar(50)
+  PULPIT_PULPIT_FACULTYToFACULTY PULPIT[] @relation("PULPIT_FACULTYToFACULTY")
+}
+
+model PULPIT {
+  PULPIT                          String    @id(map: "PK_PULPIT") @db.NChar(10)
+  PULPIT_NAME                     String?   @db.NVarChar(100)
+  FACULTY                         String    @db.NChar(10)
+  FACULTY_PULPIT_FACULTYToFACULTY FACULTY   @relation("PULPIT_FACULTYToFACULTY", fields: [FACULTY], references: [FACULTY], onDelete: Cascade, onUpdate: NoAction, map: "FK_PULPIT_FACULTY")
+  SUBJECT_SUBJECT_PULPITToPULPIT  SUBJECT[] @relation("SUBJECT_PULPITToPULPIT")
+  TEACHER_TEACHER_PULPITToPULPIT  TEACHER[] @relation("TEACHER_PULPITToPULPIT")
+}
+
+model SUBJECT {
+  SUBJECT                       String @id(map: "PK_SUBJECT") @db.NChar(10)
+  SUBJECT_NAME                  String @db.NVarChar(50)
+  PULPIT                        String @db.NChar(10)
+  PULPIT_SUBJECT_PULPITToPULPIT PULPIT @relation("SUBJECT_PULPITToPULPIT", fields: [PULPIT], references: [PULPIT], onDelete: Cascade, onUpdate: NoAction, map: "FK_SUBJECT_PULPIT")
+}
+
+
+model TEACHER {
+  TEACHER                       String  @id(map: "PK_TEACHER") @db.NChar(10)
+  TEACHER_NAME                  String? @db.NVarChar(50)
+  PULPIT                        String  @db.NChar(10)
+  PULPIT_TEACHER_PULPITToPULPIT PULPIT  @relation("TEACHER_PULPITToPULPIT", fields: [PULPIT], references: [PULPIT], onDelete: Cascade, onUpdate: NoAction, map: "FK_TEACHER_PULPIT")
+}

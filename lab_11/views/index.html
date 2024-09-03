@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+    <title>Document</title>
+
+    <script defer>
+
+function updateVisibleInputs() {
+            document.getElementById('resultDiv').textContent = '';
+            const method = document.querySelector('input[name="Method"]:checked').value;
+            const pulpitInput = document.querySelector('.Pulpit');
+            const pulpitNameInput = document.querySelector('.PulpitName');
+            const facultyInput = document.querySelector('.Faculty');
+
+            // Hide all inputs by default
+            pulpitInput.style.display = 'none';
+            pulpitNameInput.style.display = 'none';
+            facultyInput.style.display = 'none';
+
+            // Show specific inputs based on the selected method
+            switch (method) {
+                case "POST":
+                    pulpitInput.style.display = 'block';
+                    pulpitNameInput.style.display = 'block';
+                    facultyInput.style.display = 'block';
+                    break;
+                case "PUT":
+                    pulpitInput.style.display = 'block';
+                    pulpitNameInput.style.display = 'block';
+                    facultyInput.style.display = 'block';
+                    break;
+                case "DELETE":
+                    pulpitInput.style.display = 'block';
+                    break;
+                default:
+                    // No inputs for GET method
+                    break;
+            }
+        }
+
+        async function SendRequest() {
+            const method = document.querySelector('input[name="Method"]:checked').value;
+            const pulpit = document.querySelector('.Pulpit').value;
+            const pulpitName = document.querySelector('.PulpitName').value;
+            const faculty = document.querySelector('.Faculty').value;
+            let url = `http://localhost:3000/api/pulpits`;
+            const table = document.getElementById('data');
+            const data = {
+                PULPIT: pulpit,
+                PULPIT_NAME: pulpitName,
+                FACULTY: faculty
+            };
+
+
+            let resultJson;
+
+            let onlyHeadersRowLeft = table.rows.length > 1;
+            while (onlyHeadersRowLeft) {
+                table.deleteRow(1);
+                onlyHeadersRowLeft = table.rows.length > 1;
+            }
+
+            let response;
+            switch (method) {
+                case "POST":
+                    try {
+                        document.getElementById('resultDiv').textContent = '';
+                        console.log('dddddqweqwdqw ' + data);
+                        response = await fetch(url, {
+                            method: method,
+                            body: JSON.stringify(data),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.status === 404 || response.status===400) {
+                            const text = await response.text();
+                            document.getElementById('resultDiv').textContent = text;
+                        } else {
+                            const result = await response.json();
+                            console.log(result[0]);
+                            createTableContentFromJson(table, result);
+                        }
+                    } catch (e) {
+                        alert("Error: " + e.message);
+                    }
+
+                    break;
+                case "GET" :
+                document.getElementById('resultDiv').textContent = '';
+                    response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    resultJson = await response.json();
+                    console.log(resultJson);
+                    createTableContentFromJson(table, resultJson)
+                    break;
+                case "PUT":
+                    try {
+                        document.getElementById('resultDiv').textContent = '';
+                        response = await fetch(url, {
+                            method: method,
+                            body: JSON.stringify(data),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.status === 404 || response.status===400) {
+                            const text = await response.text();
+                            document.getElementById('resultDiv').textContent = text;
+                        } else {
+                            const result = await response.json();
+                            console.log(result[0]);
+                            createTableContentFromJson(table, result);
+                        }
+
+                    } catch (e) {
+                        alert("Error: " + e.message);
+                    }
+
+                    break;
+                case "DELETE":
+                    url = url.concat(`/${pulpit}`);
+                    document.getElementById('resultDiv').textContent = '';
+                    try {
+                        response = await fetch(url, {
+                            method: method,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.status === 404 || response.status===400 ) {
+                            const text = await response.text();
+                            document.getElementById('resultDiv').textContent = text;
+                        } else {
+                            const result = await response.json();
+                            console.log(result[0]);
+                            createTableContentFromJson(table, result);
+                        }
+                    } catch (e) {
+                        alert("Error: " + e.message);
+                    }
+                    break;
+
+            }
+
+        }
+
+        function createTableContentFromJson(table, resultJson) {
+            resultJson.forEach(element => {
+                const pulpit = element.PULPIT;
+                const pulpitName = element.PULPIT_NAME;
+                const faculty = element.FACULTY;
+
+                const tr = document.createElement('tr');
+                const pulpitCell = document.createElement('td');
+                const pulpitNameCell = document.createElement('td');
+                const facultyCell = document.createElement('td');
+
+                pulpitCell.textContent = pulpit;
+                pulpitNameCell.textContent = pulpitName;
+                facultyCell.textContent = faculty;
+
+                tr.appendChild(pulpitCell);
+                tr.appendChild(pulpitNameCell);
+                tr.appendChild(facultyCell);
+
+                table.appendChild(tr);
+            });
+
+        }
+
+    </script>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="Methods">
+        <label onclick="updateVisibleInputs()">
+            GET
+            <input type="radio" name="Method" value="GET">
+        </label>
+        <label onclick="updateVisibleInputs()">
+            POST
+            <input type="radio" name="Method" value="POST">
+        </label>
+        <label onclick="updateVisibleInputs()">
+            PUT
+            <input type="radio" name="Method" value="PUT">
+        </label>
+        <label onclick="updateVisibleInputs()">
+            DELETE
+            <input type="radio" name="Method" value="DELETE">
+        </label>
+    </div>
+
+
+    
+    <div id="DataInputGroup" class="DataInputGroup">
+        <input class="Pulpit" type="text" placeholder="Pulpit">
+        <input class="PulpitName" type="text" placeholder="Pulpit name">
+        <input class="Faculty" type="text" placeholder="Faculty">
+    </div>
+
+    <Button class="SendButton" onclick="SendRequest()">Request</Button>
+    <div id="resultDiv"></div>
+
+
+    <table id="data" class="table">
+        <tr id="header">
+            <th>Pulpit</th>
+            <th>Pulpit name</th>
+            <th>Faculty</th>
+        </tr>
+    </table>
+
+</div>
+
+
+</body>
+
+
+</html>
